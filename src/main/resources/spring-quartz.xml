@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--定时任务内容-->
+    <bean id="taskJob" class="com.gulchan.manage.quartz.TestTask" />
+
+    <!--定时任务详情-->
+    <bean id="JobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" >
+        <property name="targetObject" >
+            <ref bean="taskJob" />
+        </property>
+
+        <property name="targetMethod" >
+            <value>run</value>
+        </property>
+    </bean>
+
+    <!--定时任务触发器 以及出发频次-->
+    <bean id="myTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean" >
+        <property name="jobDetail" >
+            <ref bean="JobDetail" />
+        </property>
+        <property name="cronExpression" >
+            <!--从0开始每10秒执行一次-->
+            <!--<value>0/10 * * * * ?</value>-->
+            <value>0 48 14 4 7 ?</value>
+        </property>
+    </bean>
+
+    <!--触发器调度工厂，用于管理触发器-->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers" >
+            <list>
+                <ref bean="myTrigger" />
+            </list>
+        </property>
+    </bean>
+</beans>
